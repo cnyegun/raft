@@ -36,11 +36,6 @@ void step_down(raft_node_t *node, int new_term) {
   node->role = FOLLOWER;
 }
 
-/*
-returns no vote if its already voted.
-returns no vote if its term is higher than the candidate's term 
-returns yes if 
-*/
 request_vote_reply_t handle_request_vote(raft_node_t *node, request_vote_args_t args) {
   request_vote_reply_t reply; 
   reply.vote_granted = false;
