@@ -34,6 +34,7 @@ typedef struct {
 } RaftNode;
 
 RaftNode *init_raft_node(int id, int numPeers);
-
+void become_leader(RaftNode *R);
+void step_down(RaftNode *R, int newTerm);
 
 #endif
