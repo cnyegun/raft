@@ -15,4 +15,3 @@ Rule:
 - If a candidate gets majority vote, it becomes a leader and propagate `term` to all the other servers.
 - If a leader discover a new leader with higher term, it steps back to follower
 
-
