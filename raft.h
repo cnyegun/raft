@@ -43,16 +43,16 @@ void step_down(raft_node_t *node, int new_term);
 
 // RPC structs
 typedef struct {
-  int term;
-  bool vote_granted;
-} request_vote_reply_t;
-
-typedef struct {
   int candidate_term;
   int candidate_id;
   int term_last_entry;
   int index_last_entry;
 } request_vote_args_t;
+
+typedef struct {
+  int term;
+  bool vote_granted;
+} request_vote_reply_t;
 
 typedef struct {
   int leader_term;
@@ -63,5 +63,12 @@ typedef struct {
   int entries_count;
   int commit_index;
 } append_entries_args_t;
+
+typedef struct {
+  int follower_term;
+  bool append_succeed;
+} append_entries_reply_t;
+
+request_vote_reply_t handle_request_vote(raft_node_t *node, request_vote_args_t args);
 
 #endif
