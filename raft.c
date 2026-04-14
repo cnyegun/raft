@@ -1,6 +1,4 @@
 #include "raft.h"
-#include <stdlib.h>
-#include <string.h>
 
 raft_node_t *init_raft_node(int id, int num_peers) {
   raft_node_t *node = calloc(1, sizeof(raft_node_t));
