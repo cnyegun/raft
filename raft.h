@@ -1,6 +1,8 @@
 #ifndef RAFT_H
 #define RAFT_H
 
+#define INITIAL_LOG_CAPACITY 8
+
 typedef enum { FOLLOWER, CANDIDATE, LEADER } Role;
 
 typedef struct {
@@ -30,5 +32,8 @@ typedef struct {
   int id;
   int numPeers;
 } RaftNode;
+
+RaftNode *init_raft_node(int id, int numPeers);
+
 
 #endif
