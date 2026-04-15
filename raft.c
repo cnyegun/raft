@@ -89,7 +89,7 @@ append_entries_reply_t handle_append_entries(raft_node_t *node, append_entries_a
   if (node->current_term < args.leader_term)
     step_down(node, args.leader_term);
 
-  if (node->role == CANDIDATE)
+  if (node->role != FOLLOWER)
     node->role = FOLLOWER;
 
   reply.follower_term = node->current_term;
