@@ -1,4 +1,5 @@
 #include "raft.h"
+#include <assert.h>
 
 raft_node_t *init_raft_node(int id, int num_peers) {
   raft_node_t *node = calloc(1, sizeof(raft_node_t));
@@ -183,7 +184,19 @@ append_entries_reply_t handle_append_entries(raft_node_t *node, append_entries_a
   return reply;
 }
 
-void start_election(raft_node_t *node) {
-  if (node == NULL) return;
+request_vote_args_t start_election(raft_node_t *node) {
+  assert(node != NULL);
+  request_vote_args_t request = {0};
 
+  // elects itself to candidate and vote for itself.
+  node->role = CANDIDATE;
+  node->current_term++;
+  node->voted_for = node->id;
+
+  request.candidate_id = node->id;
+  request.candidate_term = node->current_term;
+  request.index_last_entry = node->log_length - 1;
+  request.term_last_entry = node->log_length > 0 ? (node->log[node->log_length - 1].term) : -1;
+
+  return request;
 }
