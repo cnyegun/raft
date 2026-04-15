@@ -8,6 +8,8 @@ raft_node_t *init_raft_node(int id, int num_peers) {
   node->voted_for = -1;
   node->log = calloc(INITIAL_LOG_CAPACITY, sizeof(log_entry_t));
   node->log_capacity = INITIAL_LOG_CAPACITY;
+  node->commit_index = -1;
+  node->last_applied = -1;
   return node;
 }
 
