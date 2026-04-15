@@ -22,6 +22,7 @@ raft_node_t *init_raft_node(int id, int num_peers) {
 }
 
 void become_leader(raft_node_t *node) {
+  if (node == NULL) return;
   if (node->role == LEADER) return;
   node->role = LEADER; 
   int num_peers = node->num_peers;
@@ -45,6 +46,7 @@ void become_leader(raft_node_t *node) {
 }
 
 void step_down(raft_node_t *node, int new_term) {
+  if (node == NULL) return;
   node->current_term = new_term;
   node->voted_for = -1;
   if (node->role == LEADER) {
@@ -57,6 +59,7 @@ void step_down(raft_node_t *node, int new_term) {
 }
 
 request_vote_reply_t handle_request_vote(raft_node_t *node, request_vote_args_t args) {
+  if (node == NULL) return;
   request_vote_reply_t reply; 
   reply.vote_granted = false;
   
@@ -98,6 +101,7 @@ request_vote_reply_t handle_request_vote(raft_node_t *node, request_vote_args_t 
 }
 
 append_entries_reply_t handle_append_entries(raft_node_t *node, append_entries_args_t args) {
+  if (node == NULL) return;
   append_entries_reply_t reply;
   int append_index;
   reply.append_succeed = false;
