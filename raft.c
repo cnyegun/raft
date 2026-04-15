@@ -89,6 +89,13 @@ append_entries_reply_t handle_append_entries(raft_node_t *node, append_entries_a
   if (node->current_term < args.leader_term)
     step_down(node, args.leader_term);
 
+  if (node->role == LEADER) {
+    free(node->next_index);
+    free(node->match_index);
+    node->next_index = NULL;
+    node->match_index = NULL;
+  }
+
   if (node->role != FOLLOWER)
     node->role = FOLLOWER;
 
