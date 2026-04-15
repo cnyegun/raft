@@ -59,9 +59,10 @@ void step_down(raft_node_t *node, int new_term) {
 }
 
 request_vote_reply_t handle_request_vote(raft_node_t *node, request_vote_args_t args) {
-  if (node == NULL) return;
   request_vote_reply_t reply; 
   reply.vote_granted = false;
+  reply.term = -1;
+  if (node == NULL) return reply;
   
   if (args.candidate_term > node->current_term) {
     step_down(node, args.candidate_term);
@@ -101,10 +102,11 @@ request_vote_reply_t handle_request_vote(raft_node_t *node, request_vote_args_t 
 }
 
 append_entries_reply_t handle_append_entries(raft_node_t *node, append_entries_args_t args) {
-  if (node == NULL) return;
   append_entries_reply_t reply;
   int append_index;
   reply.append_succeed = false;
+  reply.follower_term = -1;
+  if (node == NULL) return reply;
 
   // Follower's term is higher than leader's term
   if (node->current_term > args.leader_term) {
@@ -179,4 +181,9 @@ append_entries_reply_t handle_append_entries(raft_node_t *node, append_entries_a
   reply.append_succeed = true;
 
   return reply;
+}
+
+void start_election(raft_node_t *node) {
+  if (node == NULL) return;
+
 }
