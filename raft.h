@@ -41,6 +41,9 @@ typedef struct {
 
   role_t role;
   int id;
+  // num_peers: count of OTHER nodes in the cluster (excludes self)
+  // Total cluster size = num_peers + 1
+  // Majority = (num_peers + 1) / 2 + 1
   int num_peers;
 } raft_node_t;
 

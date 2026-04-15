@@ -209,4 +209,16 @@ void handle_vote_reply(raft_node_t *node, request_vote_reply_t reply) {
 
   if (node->role != CANDIDATE) return;
   
+  if (reply.term > node->current_term) {
+    step_down(node, reply.term);
+    return;
+  }
+
+  if (reply.term != node->current_term) return;
+
+  node->vote_received += reply.vote_granted ? 1 : 0;
+
+  if (node->vote_received > (node->num_peers + 1) / 2) {
+    become_leader(node);
+  }
 }
