@@ -84,7 +84,7 @@ static void test_become_leader_initializes_leader_state(void) {
 
   for (int i = 0; i < node->num_peers; i++) {
     assert(node->next_index[i] == 4);
-    assert(node->match_index[i] == 0);
+    assert(node->match_index[i] == -1);
   }
 
   destroy_node(node);
