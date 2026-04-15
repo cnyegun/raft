@@ -14,6 +14,7 @@ raft_node_t *init_raft_node(int id, int num_peers) {
 }
 
 void become_leader(raft_node_t *node) {
+  if (node->role == LEADER) return;
   node->role = LEADER; 
   int num_peers = node->num_peers;
   int log_length = node->log_length;
