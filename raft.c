@@ -74,3 +74,76 @@ request_vote_reply_t handle_request_vote(raft_node_t *node, request_vote_args_t 
   node->voted_for = args.candidate_id;
   return reply;
 }
+
+append_entries_reply_t handle_append_entries(raft_node_t *node, append_entries_args_t args) {
+  append_entries_reply_t reply;
+  int append_index;
+  reply.append_succeed = false;
+
+  // Follower's term is higher than leader's term
+  if (node->current_term > args.leader_term) {
+    reply.follower_term = node->current_term;
+    return reply;
+  }
+  // Leader's term is higher or equal, need to step down
+  if (node->current_term < args.leader_term)
+    step_down(node, args.leader_term);
+
+  if (node->role == CANDIDATE)
+    node->role = FOLLOWER;
+
+  reply.follower_term = node->current_term;
+
+  /* If prev_log_index == -1 skip the consistency check entirely
+   * and append from the start 
+   */
+  if (args.prev_log_index == -1) {
+    append_index = 0;
+  }
+  // Check for out of bound log access
+  else if (args.prev_log_index > node->log_length - 1 || args.prev_log_index < 0) 
+    return reply;
+  // Check if previous log entry are the same term
+  else if (args.prev_log_term == node->log[args.prev_log_index].term) {
+    append_index = args.prev_log_index + 1;
+  }
+  else {
+    return reply;
+  }
+
+  /* Appending */
+
+  for (int i = 0; i < args.entries_count; i++) {
+    int idx = append_index + i;
+    // If log is full, double the size and realloc
+    if (idx >= (node->log_capacity - 1)) {
+      node->log = realloc(node->log, sizeof(log_entry_t) * node->log_capacity * 2);
+      if (node->log == NULL) {
+        perror("realloc error");
+        exit(EXIT_FAILURE);
+      }
+      node->log_capacity *= 2;
+    }
+
+    // skips if a entry has the same term
+    if (idx < node->log_length && node->log[idx].term == args.new_entries[i].term) {
+      continue;
+    }
+
+    // truncate from this point if the entry's term is different
+    if (idx < node->log_length) {
+      node->log_length = idx;
+    }
+
+    node->log[idx] = args.new_entries[i];
+    node->log_length++;
+  }
+
+  if (args.commit_index > node->commit_index) {
+    node->commit_index = MIN(args.commit_index, node->log_length - 1);
+  }
+
+  reply.append_succeed = true;
+
+  return reply;
+}

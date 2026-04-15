@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdio.h>
+
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #ifndef RAFT_H
 #define RAFT_H
@@ -70,5 +73,6 @@ typedef struct {
 } append_entries_reply_t;
 
 request_vote_reply_t handle_request_vote(raft_node_t *node, request_vote_args_t args);
+append_entries_reply_t handle_append_entries(raft_node_t *node, append_entries_args_t args);
 
 #endif
