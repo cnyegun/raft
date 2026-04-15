@@ -36,6 +36,9 @@ typedef struct {
   int *next_index;
   int *match_index;
 
+  // Candidate-only state
+  int vote_received;
+
   role_t role;
   int id;
   int num_peers;
@@ -77,5 +80,6 @@ request_vote_reply_t handle_request_vote(raft_node_t *node, request_vote_args_t 
 append_entries_reply_t handle_append_entries(raft_node_t *node, append_entries_args_t args);
 
 request_vote_args_t start_election(raft_node_t *node);
+void handle_vote_reply(raft_node_t *node, request_vote_reply_t reply);
 
 #endif

@@ -11,6 +11,7 @@ raft_node_t *init_raft_node(int id, int num_peers) {
   node->num_peers = num_peers;
   node->role = FOLLOWER;
   node->voted_for = -1;
+  node->vote_received = 0;
   node->log = malloc(INITIAL_LOG_CAPACITY * sizeof(log_entry_t));
   if (node->log == NULL) {
     perror("malloc failed");
@@ -57,6 +58,7 @@ void step_down(raft_node_t *node, int new_term) {
     node->match_index = NULL;
   }
   node->role = FOLLOWER;
+  node->vote_received = 0;
 }
 
 request_vote_reply_t handle_request_vote(raft_node_t *node, request_vote_args_t args) {
@@ -192,6 +194,7 @@ request_vote_args_t start_election(raft_node_t *node) {
   node->role = CANDIDATE;
   node->current_term++;
   node->voted_for = node->id;
+  node->vote_received = 1;
 
   request.candidate_id = node->id;
   request.candidate_term = node->current_term;
@@ -199,4 +202,11 @@ request_vote_args_t start_election(raft_node_t *node) {
   request.term_last_entry = node->log_length > 0 ? (node->log[node->log_length - 1].term) : -1;
 
   return request;
+}
+
+void handle_vote_reply(raft_node_t *node, request_vote_reply_t reply) {
+  if (node == NULL) return;
+
+  if (node->role != CANDIDATE) return;
+  
 }
